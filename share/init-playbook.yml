@@ -1,0 +1,50 @@
+- name: vagrant provisioning
+  hosts: all # all / localhost
+  become: yes
+  tasks:
+    - name: disable SELinux
+      selinux: state=disabled
+
+    - name: create timezone Asia/Osaka
+      file:
+        src: /usr/share/zoneinfo/Asia/Tokyo
+        dest: /usr/share/zoneinfo/Asia/Osaka
+        state: link
+
+    - name: set timezone (Asia/Osaka)
+      timezone: name=Asia/Osaka
+
+    - name: add kkano at accounts
+      user: name=kkano uid=9066 shell=/bin/bash
+
+    - name: add kkano at authorized_key
+      authorized_key:
+        user: "kkano"
+        key: "ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAQEAvXcUTwuez+UlS7cglAviBPWlBekEyLtsr39DYKjY5hnoUlBbRaCEEeZERGdQ3/JcISU1z4g7mPMeEcUhfgXT6CO1EOhvGDIB+RaKA1O8/67nEvIy8G52giK5t2rjU+MX+WO6U5X+Lsbkbqc/E9YeFSRYBN8EzrcDwPi8hgpRmFJzdMAskye16+kV/y45qJJD+mIwk33JK2MNI5nCixl/Pc1+kZInZaqL6yQYDImoctMe7CLAMQf4qbfgXGrnQmY3HzqbhefLrvRp9C8oHn5kJdbAP1pkWAtqOKF0oyh49QhkDqwckDrEYoLkgOC2Lhrb8Gdj04nRgRiOr53uEEW4Ww=="
+
+    - name: .bashrc 追記
+      blockinfile:
+        path: "~{{item}}/.bashrc"
+        block: |
+          alias ls='ls -A --color=auto'
+          alias histruncate='history -c;history -w'
+          alias psx='ps x'
+          alias sudo='sudo -i'
+          export LSCOLORS=gxfxcxdxbxegedabagacad
+          export PATH=$PATH:/usr/local/bin
+      with_items:
+        - root
+        - kkano
+
+    - name: add kkano at sudoers
+      copy:
+        content: "kkano ALL=(ALL) NOPASSWD: ALL"
+        dest: /etc/sudoers.d/kkano
+        mode: 0440
+
+    - name: uninstall sendmail
+      yum: name=sendmail state=absent
+      ignore_errors: yes
+
+    - name: yum update
+      yum: name=* state=latest
