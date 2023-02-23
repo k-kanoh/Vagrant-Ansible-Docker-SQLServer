@@ -44,6 +44,7 @@ Vagrant.configure("2") do |config|
   # the path on the guest to mount the folder. And the optional third
   # argument is a set of non-required options.
   config.vm.synced_folder "./share", "/vagrant", type:"virtualbox"
+# config.vm.synced_folder "./storage/mariadb", "/mariadb-storage", type:"virtualbox", create:true, owner: 999, group: 999
 
   # Provider-specific configuration so you can fine-tune various
   # backing providers for Vagrant. These expose provider-specific options.
@@ -67,4 +68,10 @@ Vagrant.configure("2") do |config|
   config.vm.provision "ansible_local" do |ansible|
     ansible.playbook = "init-playbook.yml"
   end
+#  config.vm.provision "shell", run: "always" do |sh|
+#    sh.inline = <<-END
+#      mkdir -p /vagrant/storage/mariadb /mariadb-storage
+#      bindfs --map=1000/999:@1000/@999 /vagrant/storage/mariadb /mariadb-storage
+#    END
+#  end
 end

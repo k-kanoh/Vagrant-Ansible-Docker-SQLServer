@@ -1,0 +1,26 @@
+- name: git clone docker-redmine-orchestration
+  git:
+    repo: https://github.com/k-kanoh/docker-redmine-orchestration.git
+    dest: /app/docker-redmine-orchestration
+
+- name: chmod 755 redmine_download.sh
+  file:
+    path: /app/docker-redmine-orchestration/redmine/redmine_download.sh
+    mode: 0755
+
+- name: execute redmine_download.sh
+  shell:
+    /app/docker-redmine-orchestration/redmine/redmine_download.sh
+  args:
+    chdir: /app/docker-redmine-orchestration/redmine
+
+- name: git clone redmine_theme_farend_fancy
+  git:
+    repo: https://github.com/farend/redmine_theme_farend_fancy.git
+    dest: /app/docker-redmine-orchestration/redmine/src/public/themes/farend_fancy
+
+- name: docker-compose up
+  command:
+    "docker-compose up -d"
+  args:
+    chdir: /app/docker-redmine-orchestration

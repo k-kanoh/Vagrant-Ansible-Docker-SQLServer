@@ -84,5 +84,6 @@
         name:
           - git
           - curl
+          - bindfs
         state:
           present
