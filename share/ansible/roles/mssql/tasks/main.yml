@@ -14,7 +14,5 @@
     dest: /app/mssql/
 
 - name: docker-compose up
-  command:
-    "docker-compose up -d"
-  args:
-    chdir: /app/mssql/
+  docker_compose:
+    project_src: /app/mssql/

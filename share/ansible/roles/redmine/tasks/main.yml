@@ -20,7 +20,5 @@
     dest: /app/docker-redmine-orchestration/redmine/src/public/themes/farend_fancy
 
 - name: docker-compose up
-  command:
-    "docker-compose up -d"
-  args:
-    chdir: /app/docker-redmine-orchestration
+  docker_compose:
+    project_src: /app/docker-redmine-orchestration

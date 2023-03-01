@@ -1,12 +1,14 @@
+- name: dockerリポジトリのGPGキーを追加
+  apt_key:
+    url: "https://download.docker.com/{{ ansible_system | lower }}/{{ ansible_distribution | lower }}/gpg"
+
 - name: dockerリポジトリを追加
-  get_url:
-    url: "https://download.docker.com/{{ ansible_system | lower }}/{{ ansible_distribution | lower }}/docker-ce.repo"
-    dest: /etc/yum.repos.d/docker-ce.repo
+  apt_repository:
+    repo: "deb [arch=amd64] https://download.docker.com/{{ ansible_system | lower }}/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} stable"
 
 - name: dockerのインストール
-  yum:
+  apt:
     name: docker-ce
-    state: present
 
 - name: ユーザをdockerグループに追加
   user:
@@ -14,25 +16,13 @@
     groups: docker
     append: yes
 
-- name: dockerを有効化
-  systemd:
-    name: docker
-    state: started
-    enabled: yes
-
-- name: docker-composeのURLを解析
-  shell:
-    "curl --silent --show-error https://api.github.com/repos/docker/compose/releases/latest | grep '{{ ansible_system | lower }}-{{ ansible_architecture }}\"' | grep browser_download_url | cut --delimiter='\"' --fields=4"
-  args:
-    warn: no
-  register:
-    docker_compose_url
+- name: pipのインストール
+  apt:
+    name: pip
 
 - name: docker-composeのインストール
-  get_url:
-    url: "{{ docker_compose_url.stdout }}"
-    dest: /usr/local/bin/docker-compose
-    mode: 0755
+  pip:
+    name: docker-compose
 
 - name: aliasを設定
   blockinfile:

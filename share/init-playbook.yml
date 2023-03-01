@@ -6,10 +6,6 @@
       - root
       - kkano
   tasks:
-    - name: SELinuxを無効化
-      selinux:
-        state: disabled
-
     - name: timezoneを設定
       timezone:
         name: Asia/Tokyo
@@ -25,38 +21,14 @@
         user: kkano
         key: "ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAQEAvXcUTwuez+UlS7cglAviBPWlBekEyLtsr39DYKjY5hnoUlBbRaCEEeZERGdQ3/JcISU1z4g7mPMeEcUhfgXT6CO1EOhvGDIB+RaKA1O8/67nEvIy8G52giK5t2rjU+MX+WO6U5X+Lsbkbqc/E9YeFSRYBN8EzrcDwPi8hgpRmFJzdMAskye16+kV/y45qJJD+mIwk33JK2MNI5nCixl/Pc1+kZInZaqL6yQYDImoctMe7CLAMQf4qbfgXGrnQmY3HzqbhefLrvRp9C8oHn5kJdbAP1pkWAtqOKF0oyh49QhkDqwckDrEYoLkgOC2Lhrb8Gdj04nRgRiOr53uEEW4Ww=="
 
-    - name: .bashrc編集
-      lineinfile:
-        dest: "~{{item}}/.bashrc"
-        regexp: "^alias rm='rm -i'$"
-        state: absent
-      with_items: "{{users}}"
-
-    - name: .bashrc編集
-      lineinfile:
-        dest: "~{{item}}/.bashrc"
-        regexp: "^alias cp='cp -i'$"
-        state: absent
-      with_items: "{{users}}"
-
-    - name: .bashrc編集
-      lineinfile:
-        dest: "~{{item}}/.bashrc"
-        regexp: "^alias mv='mv -i'$"
-        state: absent
-      with_items: "{{users}}"
-
     - name: .bashrc追記
       blockinfile:
         path:
           "~{{item}}/.bashrc"
         block: |
-          alias ls='ls -A --color=auto'
           alias histruncate='history -c;history -w'
           alias psx='ps x'
           alias sudo='sudo -i'
-          export LSCOLORS=gxfxcxdxbxegedabagacad
-          export PATH=$PATH:/usr/local/bin
         marker:
           "# {mark} Insert by init-playbook.yml"
       with_items:
@@ -68,22 +40,7 @@
         dest: /etc/sudoers.d/kkano
         mode: 0440
 
-    - name: sendmailを削除
-      yum:
-        name: sendmail
-        state: absent
-      ignore_errors: yes
-
-    - name: yum update
-      yum:
-        name: "*"
-        state: latest
-
-    - name: 必要そうなパッケージのインストール
-      yum:
-        name:
-          - git
-          - curl
-          - bindfs
-        state:
-          present
+    - name: apt upgrade
+      apt:
+        update_cache: yes
+        upgrade: yes
