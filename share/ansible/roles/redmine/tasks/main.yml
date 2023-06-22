@@ -19,6 +19,8 @@
     repo: https://github.com/farend/redmine_theme_farend_fancy.git
     dest: /app/docker-redmine-orchestration/redmine/src/public/themes/farend_fancy
 
-- name: docker-compose up
-  docker_compose:
-    project_src: /app/docker-redmine-orchestration
+- name: docker compose up
+  command:
+    "docker compose up -d"
+  args:
+    chdir: /app/docker-redmine-orchestration

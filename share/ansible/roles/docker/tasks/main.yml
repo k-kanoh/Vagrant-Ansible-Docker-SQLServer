@@ -10,26 +10,12 @@
   apt:
     name: docker-ce
 
-- name: ユーザをdockerグループに追加
-  user:
-    name: kkano
-    groups: docker
-    append: yes
-
-- name: pipのインストール
-  apt:
-    name: pip
-
-- name: docker-composeのインストール
-  pip:
-    name: docker-compose
-
 - name: aliasを設定
   blockinfile:
     path:
       "~{{item}}/.bashrc"
     block: |
-      alias dc='docker-compose'
+      alias dc='docker compose'
     marker:
       "# {mark} Insert by docker install playbook"
   with_items:

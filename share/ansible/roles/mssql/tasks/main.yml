@@ -10,9 +10,11 @@
 
 - name: copy docker-compose.yml
   copy:
-    src: roles/mssql/files/docker-compose.yml
+    src: docker-compose.yml
     dest: /app/mssql/
 
-- name: docker-compose up
-  docker_compose:
-    project_src: /app/mssql/
+- name: docker compose up
+  command:
+    "docker compose up -d"
+  args:
+    chdir: /app/mssql
