@@ -1,0 +1,17 @@
+- name: install dprint
+  shell: "curl -fsSL https://dprint.dev/install.sh | sh"
+
+- name: copy dprint -> /usr/local/bin
+  copy:
+    src: ~/.dprint/bin/dprint
+    dest: /usr/local/bin
+    mode: 0755
+
+- name: add dprint path -> .bashrc
+  blockinfile:
+    path:
+      "~/.bashrc"
+    block: |
+      export DPRINT_INSTALL="~/.dprint"
+    marker:
+      "# {mark} Insert by vscode install playbook"

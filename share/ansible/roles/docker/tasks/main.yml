@@ -16,6 +16,7 @@
       "~{{item}}/.bashrc"
     block: |
       alias dc='docker compose'
+      alias dce='docker compose exec'
     marker:
       "# {mark} Insert by docker install playbook"
   with_items:
